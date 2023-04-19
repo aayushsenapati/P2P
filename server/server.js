@@ -24,23 +24,27 @@ io.on('connection', (socket) => {
             clients.delete(socket.id);
             io.emit('clientList', { mapData: Array.from(clients) });
         });
+
         //clientName is an array of client names
-        socket.on('createRoom', ({ clientArray }) => {
+        socket.on('createRoom', async ({ clientArray }) => {
             console.log('Creating room');
             const roomName = `room${Math.random().toString(36).substr(2, 9)}`;
-            console.log(clientArray)
-            clientArray.forEach(async (client) => {
+
+            await Promise.all(clientArray.map(async (client) => {
                 const clientSocketId = Array.from(clients.keys()).find(
                     (key) => clients.get(key) === client
                 );
-                //io.to(clientSocketId).emit('joinRoom', { roomName });
-                const soc =  await io.in(clientSocketId).fetchSockets();
-                //console.log(soc)
-                soc.join(roomName);
-                console.log(clients)
+                const soc = await io.in(clientSocketId).fetchSockets();
+
+                soc[0].join(roomName);
+
                 clients.delete(clientSocketId);
                 io.emit('clientList', { mapData: Array.from(clients) });
-            });
+            }));
+
+            const roomClients = io.sockets.adapter.rooms.get(roomName);
+
+            io.in(roomName).emit('renderRoom');
         });
     } catch (error) {
         console.error(`Error: ${error.message}`);
