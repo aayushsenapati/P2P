@@ -25,16 +25,21 @@ io.on('connection', (socket) => {
             io.emit('clientList', { mapData: Array.from(clients) });
         });
         //clientName is an array of client names
-        socket.on('createRoom', ({ clientName }) => {
+        socket.on('createRoom', ({ clientArray }) => {
             console.log('Creating room');
             const roomName = `room${Math.random().toString(36).substr(2, 9)}`;
-            clientName.forEach((client) => {
+            console.log(clientArray)
+            clientArray.forEach(async (client) => {
                 const clientSocketId = Array.from(clients.keys()).find(
                     (key) => clients.get(key) === client
                 );
                 //io.to(clientSocketId).emit('joinRoom', { roomName });
-                const soc = io.sockets.connected[clientSocketId];
+                const soc =  await io.in(clientSocketId).fetchSockets();
+                //console.log(soc)
                 soc.join(roomName);
+                console.log(clients)
+                clients.delete(clientSocketId);
+                io.emit('clientList', { mapData: Array.from(clients) });
             });
         });
     } catch (error) {

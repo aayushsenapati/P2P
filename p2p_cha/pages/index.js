@@ -24,7 +24,7 @@ export default function Home() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const temp = formData.get('clientName')
-
+    setSelectedClients([...selectedClients,temp]);
     setClientName(temp);
     socket.emit('register', temp);
 
@@ -32,9 +32,9 @@ export default function Home() {
 
   // Handle checkbox click event
   const handleCheckboxClick = (e) => {
-    const clientName = e.target.value;
+    const checkName = e.target.value;
     if (e.target.checked) {
-      setSelectedClients([...selectedClients, clientName]);
+      setSelectedClients([...selectedClients,checkName]);
     } else {
       setSelectedClients(selectedClients.filter((name) => name !== clientName));
     }
@@ -43,6 +43,7 @@ export default function Home() {
   // Handle create room button click event
   const handleCreateRoomClick = () => {
     // Send request to server to create new room and add selected clients to it
+    if(selectedClients.length < 2) return;
     socket.emit('createRoom', { clientArray: selectedClients });
     setSelectedClients([]);
   };
@@ -64,8 +65,8 @@ export default function Home() {
               <input
                 type="checkbox"
                 value={client}
-                onClick={handleCheckboxClick}
-                checked={selectedClients.includes(client)}
+                onChange={handleCheckboxClick}
+                defaultChecked={selectedClients.includes(client)}
               />
               {client}
             </li>)
