@@ -43,7 +43,7 @@ export default function Home() {
   // Handle create room button click event
   const handleCreateRoomClick = () => {
     // Send request to server to create new room and add selected clients to it
-    socket.emit('createRoom', { clients: selectedClients });
+    socket.emit('createRoom', { clientArray: selectedClients });
     setSelectedClients([]);
   };
 
