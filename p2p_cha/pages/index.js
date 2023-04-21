@@ -10,13 +10,14 @@ export default function Home() {
   const [clientName, setClientName] = useState('');//your name
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
-  const [peerID, setPeerID] = useState('');
+  //const [peerID, setPeerID] = useState('');
 
   
 
 
   // Listen for list of active clients
   useEffect(() => {
+    var peerID='';
     import('peerjs').then(module => {
       const Peer = module.default;
       const peer = new Peer(undefined, {
@@ -28,8 +29,7 @@ export default function Home() {
   
       peer.on('open',function(id) {
         console.log('My peer ID is: ' + id);
-        setPeerID(id);
-        console.log(peerID)
+        peerID=id;
       });
     });
     socket.on('clientList', ({ mapData }) => {
@@ -38,9 +38,11 @@ export default function Home() {
     });
     socket.on('renderRoom', (roomName) => {
       console.log(roomName)
-      socket.emit('peerID',peerID,roomName);
       setRender(true);
+      if(peerID)
+        socket.emit('peerID',peerID,roomName);
     })
+    
     socket.on('clientPeerID', (clientPeerID) => {
       console.log('connected client peer id:',clientPeerID);
     })
@@ -51,6 +53,7 @@ export default function Home() {
     };
   }, []);
 
+  
   // Handle registration form submission
   const handleSubmit = (e) => {
     e.preventDefault();
