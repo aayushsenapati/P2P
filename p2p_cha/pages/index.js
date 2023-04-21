@@ -1,25 +1,51 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
+
+
 const socket = io('http://localhost:3001'); // Change URL to match your server
 
 export default function Home() {
-  const [clients, setClients] = useState(new Map());
-  const [clientName, setClientName] = useState('');
-  const [selectedClients, setSelectedClients] = useState([]);
+  const [clients, setClients] = useState(new Map());//active clients
+  const [clientName, setClientName] = useState('');//your name
+  const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
+  const [peerID, setPeerID] = useState('');
+
+  
+
 
   // Listen for list of active clients
   useEffect(() => {
+    import('peerjs').then(module => {
+      const Peer = module.default;
+      const peer = new Peer(undefined, {
+        host: '/',
+        port: '3002',
+        path: '/peerjs',
+        debug: 3
+      });
+  
+      peer.on('open',function(id) {
+        console.log('My peer ID is: ' + id);
+        setPeerID(id);
+        console.log(peerID)
+      });
+    });
     socket.on('clientList', ({ mapData }) => {
       setClients(new Map(mapData));
       //console.log(Array.from(clients));
     });
-    socket.on('renderRoom', () => {
-
-      
+    socket.on('renderRoom', (roomName) => {
+      console.log(roomName)
+      socket.emit('peerID',peerID,roomName);
       setRender(true);
     })
+    socket.on('clientPeerID', (clientPeerID) => {
+      console.log('connected client peer id:',clientPeerID);
+    })
+
+    
     return () => {
       socket.off('clientList');
     };

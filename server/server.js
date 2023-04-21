@@ -1,6 +1,9 @@
 const express = require('express');
+const cors = require('cors')
 const app = express();
+const app2=express();
 const http = require('http').createServer(app);
+const { ExpressPeerServer } = require('peer');
 const io = require('socket.io')(http, {
     cors: {
         origin: "http://localhost:3000",
@@ -8,6 +11,7 @@ const io = require('socket.io')(http, {
     }
 });
 
+app.use(cors())
 const clients = new Map();
 
 io.on('connection', (socket) => {
@@ -37,15 +41,19 @@ io.on('connection', (socket) => {
                 const soc = await io.in(clientSocketId).fetchSockets();
 
                 soc[0].join(roomName);
-
                 clients.delete(clientSocketId);
                 io.emit('clientList', { mapData: Array.from(clients) });
             }));
 
-            const roomClients = io.sockets.adapter.rooms.get(roomName);
+            //const roomClients = io.sockets.adapter.rooms.get(roomName);
 
-            io.in(roomName).emit('renderRoom');
+            io.in(roomName).emit('renderRoom',roomName);
         });
+
+        socket.on('peerID', (peerID,roomName) => {
+            console.log('connected client peer id:',peerID);
+            socket.to(roomName).emit('clientPeerID', peerID);
+        })
     } catch (error) {
         console.error(`Error: ${error.message}`);
     }
@@ -55,3 +63,9 @@ const port = 3001;
 http.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
+
+
+
+const pjs=app2.listen(3002)
+const peerServer = ExpressPeerServer(pjs);
+app2.use("/peerjs", peerServer);
