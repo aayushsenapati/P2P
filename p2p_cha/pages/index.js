@@ -41,9 +41,16 @@ export default function Home() {
       });
 
       peer.on('connection', function (conn) {
-        conn.send('Hello! from:', peer.id);
-        conn.on('data', function (data) {
-          console.log('Received', data);
+        console.log("in connection denjfbvejrkbgvihjwberghivbewhrbgvhewbrhivbehirbvhebfrvhbehfrbvhe3b",conn)
+        
+        conn.on('open', function () {
+          console.log("in open aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+          conn.on('data', function (data) {
+            console.log('Received', data);
+          });
+
+          // Send messages
+          conn.send('Hello!');
         });
       });
 
