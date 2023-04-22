@@ -10,14 +10,15 @@ export default function Home() {
   const [clientName, setClientName] = useState('');//your name
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
-  //const [peerID, setPeerID] = useState('');
+  const [peerID, setPeerID] = useState('');
+  const [peerIds, setPeerIds] = useState([]);//peer ids of selected clients
+  const [peer, setPeer] = useState(null);
 
-  
+
 
 
   // Listen for list of active clients
   useEffect(() => {
-    var peerID='';
     import('peerjs').then(module => {
       const Peer = module.default;
       const peer = new Peer(undefined, {
@@ -26,34 +27,49 @@ export default function Home() {
         path: '/peerjs',
         debug: 3
       });
-  
-      peer.on('open',function(id) {
-        console.log('My peer ID is: ' + id);
-        peerID=id;
-      });
-    });
-    socket.on('clientList', ({ mapData }) => {
-      setClients(new Map(mapData));
-      //console.log(Array.from(clients));
-    });
-    socket.on('renderRoom', (roomName) => {
-      console.log(roomName)
-      setRender(true);
-      if(peerID)
-        socket.emit('peerID',peerID,roomName);
-    })
-    
-    socket.on('clientPeerID', (clientPeerID) => {
-      console.log('connected client peer id:',clientPeerID);
-    })
 
-    
+      peer.on('open', function (id) {
+        console.log('My peer ID is: ' + id);
+        socket.on('renderRoom', (roomName) => {
+          console.log(roomName)
+          setRender(true);
+          socket.emit('peerID', id, roomName);
+        })
+      });
+      peer.on('error', function (err) {
+        console.log(err.message);
+      });
+
+      peer.on('connection', function (conn) {
+        conn.send('Hello! from:', peer.id);
+        conn.on('data', function (data) {
+          console.log('Received', data);
+        });
+      });
+
+      socket.on('clientPeerID', (clientPeerID) => {
+        console.log('connected client peer id:', clientPeerID);
+        peer.connect(clientPeerID);
+      })
+
+
+    });
+
+
+    socket.on('clientList', ({ mapData }) => {
+      setClients(new Map(mapData))
+    });
+
+
+
     return () => {
       socket.off('clientList');
+
     };
   }, []);
 
-  
+
+
   // Handle registration form submission
   const handleSubmit = (e) => {
     e.preventDefault();
