@@ -15,7 +15,9 @@ export default function Home() {
   const [messageArray, setMessageArray] = useState([]);
   
   
-
+  useEffect(()=>{
+    console.log(messageArray);
+  },[messageArray]);
 
   const configuration = {
     iceServers: [
@@ -88,7 +90,7 @@ export default function Home() {
           //console.log(command)
           if ("command:", command)
             conn.send(command);
-          conn.send("hello!");
+          conn.send("");
 
         });
         conn.on("error", (err) => {
@@ -142,6 +144,9 @@ export default function Home() {
     if(e.key === 'Enter')
     {
       let message = e.target.value
+      e.target.value = '';
+     
+      if(!message) return;
       console.log(message);
       for(let i of peerConn)
       {
@@ -149,7 +154,6 @@ export default function Home() {
       }
 
       let id = peer.id
-
       setMessageArray(((messageArray) => [...messageArray,{'id':id,'data':message}]))
 
     }
@@ -199,11 +203,12 @@ export default function Home() {
     <>
       <h1>Client Lobby</h1>
       <div id='messageDisp' style={{marginBottom:'30px'}}>
-        {messageArray.map((mes,key)=>{
+        {messageArray.map((mes, i)=>{
           if(mes.id === peer.id)
-            <h2 style={{justifyContent:'left'}}>{mes.message}</h2>
-            else
-            <h2 style={{justifyContent:'right'}}>{mes.message}</h2>
+            return  <h2 key = {i} style={{justifyContent:'left', color : 'blue'}}>{mes.data}</h2>
+          else
+            return  <h2 key = {i} style={{justifyContent:'right', color : 'green'}}>{mes.data}</h2>
+
         })}
       </div>
       <input style={{border:'black'}} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
