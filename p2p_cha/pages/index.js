@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
+var peerConn = [];//peer ids of selected clients
 
 
 const socket = io('http://localhost:3001'); // Change URL to match your server
@@ -11,7 +12,6 @@ export default function Home() {
   const [clientName, setClientName] = useState('');//your name
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
-  const [peerConn, setPeerConn] = useState([]);//peer ids of selected clients
   const [messageArray, setMessageArray] = useState([]);
   
   
@@ -82,7 +82,7 @@ export default function Home() {
         }
 
         conn = peer.connect(clientPeerID, { reliable: true });
-        setPeerConn([...peerConn, conn]);
+        peerConn.push(conn);
         console.log("peerConn:", peerConn)
         conn.on("open", () => {
           console.log("Connected to: " + conn.peer);
@@ -148,9 +148,11 @@ export default function Home() {
      
       if(!message) return;
       console.log(message);
-      for(let i of peerConn)
+      for(let i=0; i<peerConn.length; i++)
       {
-        i.send(message)
+        console.log(message, peerConn[i])
+        //open connections to all client client peerConn[i]
+        peerConn[i].send(message)
       }
 
       let id = peer.id
