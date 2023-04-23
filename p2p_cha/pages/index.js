@@ -1,23 +1,26 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-var peerConn = [];//peer ids of selected clients
+//peer ids of selected clients
 
 
 const socket = io('http://localhost:3001'); // Change URL to match your server
 
-var peer;
+
 export default function Home() {
   const [clients, setClients] = useState(new Map());//active clients
   const [clientName, setClientName] = useState('');//your name
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
   const [messageArray, setMessageArray] = useState([]);
-  
-  
-  useEffect(()=>{
+  const [peerClient, setPeerClient] = useState("");
+  const [peerConn, setPeerConn] = useState([]);
+
+
+
+  useEffect(() => {
     console.log(messageArray);
-  },[messageArray]);
+  }, [messageArray]);
 
   const configuration = {
     iceServers: [
@@ -39,17 +42,16 @@ export default function Home() {
   };
   // Listen for list of active clients
   useEffect(() => {
-    var conn = null
     import('peerjs').then(module => {
       const Peer = module.default;
-      peer = new Peer(undefined, {
+      const peer = new Peer(undefined, {
         host: '/',
         port: '3002',
         path: '/peerjs',
         config: configuration,
         debug: 1
       });
-
+      setPeerClient[peer]
       peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
         socket.on('renderRoom', (roomName) => {
@@ -61,59 +63,41 @@ export default function Home() {
       peer.on('error', function (err) {
         console.log(err.message);
       });
-
       peer.on('connection', function (connec) {
         console.log("connec.peer:", connec.peer)
         connec.on("data", (data) => {
           // Will print 'hi!'
           console.log(data);
-          let id = connec.peer 
-          setMessageArray(((messageArray) => [...messageArray,{'id':id,'data':data}]))
+          let id = connec.peer
+          setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data }]))
         });
         connec.on("error", (err) => {
           console.log(err.message);
         });
       });
-
       socket.on('clientPeerID', (clientPeerID) => {
         console.log('connected client peer id:', clientPeerID);
-        if (conn) {
-          conn.close();
-        }
-
-        conn = peer.connect(clientPeerID, { reliable: true });
-        peerConn.push(conn);
-        console.log("peerConn:", peerConn)
+        const conn = peer.connect(clientPeerID, { reliable: true });
+        setPeerConn((peerConn)=>[...peerConn, conn])
+        console.log("peerConn in peer.connect:", peerConn)
         conn.on("open", () => {
           console.log("Connected to: " + conn.peer);
           var command = getUrlParam("command");
-          //console.log(command)
           if ("command:", command)
             conn.send(command);
-          conn.send("");
-
+          conn.send("hello");
         });
         conn.on("error", (err) => {
           console.log(err.message);
         });
-
-
       })
-
-
     });
-
-
     socket.on('clientList', ({ mapData }) => {
       setClients(new Map(mapData))
     });
-
-
-
     return () => {
       socket.off('clientList');
       socket.off('clientPeerID');
-
     };
   }, []);
 
@@ -141,22 +125,19 @@ export default function Home() {
   };
 
   const handleMessageSend = (e) => {
-    if(e.key === 'Enter')
-    {
+    if (e.key === 'Enter') {
       let message = e.target.value
       e.target.value = '';
-     
-      if(!message) return;
-      console.log(message);
-      for(let i=0; i<peerConn.length; i++)
-      {
-        console.log(message, peerConn[i])
-        //open connections to all client client peerConn[i]
-        peerConn[i].send(message)
-      }
 
-      let id = peer.id
-      setMessageArray(((messageArray) => [...messageArray,{'id':id,'data':message}]))
+      if (!message) return;
+      console.log("typed message",message);
+      console.log("peerConn:", peerConn)
+      peerConn.forEach((conn) => {
+        console.log("in handle message send", conn)
+        conn.send(message);
+      })
+      let id = peerClient.id
+      setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': message }]))
 
     }
   }
@@ -202,18 +183,18 @@ export default function Home() {
   }
   else {
     return (
-    <>
-      <h1>Client Lobby</h1>
-      <div id='messageDisp' style={{marginBottom:'30px'}}>
-        {messageArray.map((mes, i)=>{
-          if(mes.id === peer.id)
-            return  <h2 key = {i} style={{justifyContent:'left', color : 'blue'}}>{mes.data}</h2>
-          else
-            return  <h2 key = {i} style={{justifyContent:'right', color : 'green'}}>{mes.data}</h2>
+      <>
+        <h1>Client Lobby</h1>
+        <div id='messageDisp' style={{ marginBottom: '30px' }}>
+          {messageArray.map((mes, i) => {
+            if (mes.id === peerClient.id)
+              return <h2 key={i} style={{ justifyContent: 'left', color: 'blue' }}>{mes.data}</h2>
+            else
+              return <h2 key={i} style={{ justifyContent: 'right', color: 'green' }}>{mes.data}</h2>
 
-        })}
-      </div>
-      <input style={{border:'black'}} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-    </>);
+          })}
+        </div>
+        <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+      </>);
   }
 }
