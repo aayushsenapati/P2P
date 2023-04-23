@@ -81,6 +81,7 @@ export default function Home() {
 
         conn = peer.connect(clientPeerID, { reliable: true });
         setPeerConn([...peerConn, conn]);
+        console.log("peerConn:", peerConn)
         conn.on("open", () => {
           console.log("Connected to: " + conn.peer);
           var command = getUrlParam("command");
@@ -109,6 +110,7 @@ export default function Home() {
 
     return () => {
       socket.off('clientList');
+      socket.off('clientPeerID');
 
     };
   }, []);
