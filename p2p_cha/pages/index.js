@@ -18,9 +18,9 @@ export default function Home() {
 
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     console.log(messageArray);
-  }, [messageArray]);
+  }, [messageArray]); */
 
   const configuration = {
     iceServers: [
@@ -64,7 +64,7 @@ export default function Home() {
         console.log(err.message);
       });
       peer.on('connection', function (connec) {
-        console.log("connec.peer:", connec.peer)
+        console.log("connected peer id:", connec.peer)
         connec.on("data", (data) => {
           // Will print 'hi!'
           console.log(data);
@@ -76,16 +76,16 @@ export default function Home() {
         });
       });
       socket.on('clientPeerID', (clientPeerID) => {
-        console.log('connected client peer id:', clientPeerID);
+        //console.log('connected client peer id:', clientPeerID);
         const conn = peer.connect(clientPeerID, { reliable: true });
         setPeerConn((peerConn)=>[...peerConn, conn])
-        console.log("peerConn in peer.connect:", peerConn)
+        //console.log("peerConn in peer.connect:", peerConn) wont do anything,
         conn.on("open", () => {
-          console.log("Connected to: " + conn.peer);
+          //console.log("Connected to: " + conn.peer);
           var command = getUrlParam("command");
           if ("command:", command)
             conn.send(command);
-          conn.send("hello");
+          conn.send(`${peer.id}:connected`);
         });
         conn.on("error", (err) => {
           console.log(err.message);
@@ -133,7 +133,7 @@ export default function Home() {
       console.log("typed message",message);
       console.log("peerConn:", peerConn)
       peerConn.forEach((conn) => {
-        console.log("in handle message send", conn)
+        //console.log("in handle message send", conn)
         conn.send(message);
       })
       let id = peerClient.id
