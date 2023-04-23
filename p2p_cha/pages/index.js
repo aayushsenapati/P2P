@@ -11,21 +11,39 @@ export default function Home() {
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
   const [peerID, setPeerID] = useState('');
-  const [peerIds, setPeerIds] = useState([]);//peer ids of selected clients
+  const [peerConn, setPeerConn] = useState([]);//peer ids of selected clients
   const [peer, setPeer] = useState(null);
 
 
-
-
+  const configuration = {
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun2.l.google.com:19302" },
+      { urls: "turn:relay1.expressturn.com:3478", username: "efZU0G18FKVK6GOKSN", credential: "3NiZNfNHWglGkCcu" },
+    ],
+  };
+  function getUrlParam(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if (results == null)
+      return null;
+    else
+      return results[1];
+  };
   // Listen for list of active clients
   useEffect(() => {
+    var conn = null
     import('peerjs').then(module => {
       const Peer = module.default;
       const peer = new Peer(undefined, {
         host: '/',
         port: '3002',
         path: '/peerjs',
-        debug: 3
+        config: configuration,
+        debug: 1
       });
 
       peer.on('open', function (id) {
@@ -40,23 +58,39 @@ export default function Home() {
         console.log(err.message);
       });
 
-      peer.on('connection', function (conn) {
-        console.log("in connection denjfbvejrkbgvihjwberghivbewhrbgvhewbrhivbehirbvhebfrvhbehfrbvhe3b",conn)
-        
-        conn.on('open', function () {
-          console.log("in open aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-          conn.on('data', function (data) {
-            console.log('Received', data);
-          });
-
-          // Send messages
-          conn.send('Hello!');
+      peer.on('connection', function (connec) {
+        console.log("connec.peer:", connec.peer)
+        connec.on("data", (data) => {
+          // Will print 'hi!'
+          console.log(data);
+        });
+        connec.on("error", (err) => {
+          console.log(err.message);
         });
       });
 
       socket.on('clientPeerID', (clientPeerID) => {
         console.log('connected client peer id:', clientPeerID);
-        peer.connect(clientPeerID);
+        if (conn) {
+          conn.close();
+        }
+
+        conn = peer.connect(clientPeerID, { reliable: true });
+        setPeerConn([...peerConn, conn]);
+        conn.on("open", () => {
+          console.log("Connected to: " + conn.peer);
+          var command = getUrlParam("command");
+          //console.log(command)
+          if ("command:", command)
+            conn.send(command);
+          conn.send("hello!");
+
+        });
+        conn.on("error", (err) => {
+          console.log(err.message);
+        });
+
+
       })
 
 
