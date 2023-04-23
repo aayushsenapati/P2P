@@ -5,14 +5,16 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001'); // Change URL to match your server
 
+var peer;
 export default function Home() {
   const [clients, setClients] = useState(new Map());//active clients
   const [clientName, setClientName] = useState('');//your name
   const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
-  const [peerID, setPeerID] = useState('');
   const [peerConn, setPeerConn] = useState([]);//peer ids of selected clients
-  const [peer, setPeer] = useState(null);
+  const [messageArray, setMessageArray] = useState([]);
+  
+  
 
 
   const configuration = {
@@ -38,7 +40,7 @@ export default function Home() {
     var conn = null
     import('peerjs').then(module => {
       const Peer = module.default;
-      const peer = new Peer(undefined, {
+      peer = new Peer(undefined, {
         host: '/',
         port: '3002',
         path: '/peerjs',
@@ -63,6 +65,8 @@ export default function Home() {
         connec.on("data", (data) => {
           // Will print 'hi!'
           console.log(data);
+          let id = connec.peer 
+          setMessageArray(((messageArray) => [...messageArray,{'id':id,'data':data}]))
         });
         connec.on("error", (err) => {
           console.log(err.message);
@@ -132,6 +136,23 @@ export default function Home() {
     }
   };
 
+  const handleMessageSend = (e) => {
+    if(e.key === 'Enter')
+    {
+      let message = e.target.value
+      console.log(message);
+      for(let i of peerConn)
+      {
+        i.send(message)
+      }
+
+      let id = peer.id
+
+      setMessageArray(((messageArray) => [...messageArray,{'id':id,'data':message}]))
+
+    }
+  }
+
   // Handle create room button click event
   const handleCreateRoomClick = () => {
     // Send request to server to create new room and add selected clients to it
@@ -172,6 +193,18 @@ export default function Home() {
     );
   }
   else {
-    return (<h1>Cok</h1>);
+    return (
+    <>
+      <h1>Client Lobby</h1>
+      <div id='messageDisp' style={{marginBottom:'30px'}}>
+        {messageArray.map((mes,key)=>{
+          if(mes.id === peer.id)
+            <h2 style={{justifyContent:'left'}}>{mes.message}</h2>
+            else
+            <h2 style={{justifyContent:'right'}}>{mes.message}</h2>
+        })}
+      </div>
+      <input style={{border:'black'}} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+    </>);
   }
 }
