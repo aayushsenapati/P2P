@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 
-export default function Register(props) {
+export default function Login(props) {
     return(
         <ThemeProvider theme={props.darkTheme}>
         <CssBaseline/>
@@ -38,4 +38,4 @@ export default function Register(props) {
         </button>
       </ThemeProvider>
     )
-}
+};

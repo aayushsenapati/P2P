@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
 import Message from './Message';
+import Login from './Login';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -87,7 +88,7 @@ export default function Home() {
           // Will print 'hi!'
           console.log(data);
           let id = connec.peer
-          if(!data.includes(":connected")){
+          if (!data.includes(":connected")) {
             setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label }]))
           }
         });
@@ -139,8 +140,8 @@ export default function Home() {
 
   };
 
-  const handleNameEnter = (e) =>{
-    if(e.target.key === 'Enter')
+  const handleNameEnter = (e) => {
+    if (e.target.key === 'Enter')
       handleSubmit();
   }
 
@@ -183,58 +184,29 @@ export default function Home() {
 
   if (!render) {
     return (
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline/>
-        <h1>Client Lobby</h1>
-        <form onSubmit={handleSubmit}>
-          <Typography variant='h5' htmlFor="clientName">Enter your name:  
-            <TextField label="Name" variant="outlined" id="clientName" name="clientName" required onKeyPress={handleNameEnter}/>
-          <Button type='submit'>Register</Button>
-          </Typography>
-          
-        </form>
-        <h2>Active clients:</h2>
-        <ul>
-          {Array.from(clients.values())
-            .filter((client) => client !== clientName)
-            .map((client, i) => (
-              client && (<li key={i}>
-                <input
-                  type="checkbox"
-                  value={client}
-                  onChange={handleCheckboxClick}
-                  defaultChecked={selectedClients.includes(client)}
-                />
-                {client}
-              </li>)
-            ))}
-        </ul>
-        <button onClick={handleCreateRoomClick} disabled={selectedClients.length === 0}>
-          Create Room
-        </button>
-      </ThemeProvider>
+      <Login darkTheme={darkTheme} handleSubmit={handleSubmit} handleNameEnter={handleNameEnter} handleCheckboxClick={handleCheckboxClick} handleCreateRoomClick={handleCreateRoomClick} selectedClients={selectedClients} clients={clients} />
     );
   }
   else {
     return (
       <>
-      <ThemeProvider theme={darkTheme} sx={{width:'100vw'}} >
-        <CssBaseline />
+        <ThemeProvider theme={darkTheme} sx={{ width: '100vw' }} >
+          <CssBaseline />
 
-        <Box sx={{width:'70%',height:'100vh', backgroundColor:'#151515', margin:'auto'}}>
-          <h1>Client Lobby</h1>
-          <div id='messageDisp' style={{ marginBottom: '30px'}}>
-            {messageArray.map((mes, i) => {
-              if (mes.id === peerClient.id)
-                return <Message name={'You'} message={mes.data} sender={1} />
-              else
-                return <Message name={mes.name} message={mes.data} sender={0} />
-            })}
-          </div>
-          <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-        </Box>
-      </ThemeProvider>
+          <Box sx={{ width: '70%', height: '100vh', backgroundColor: '#151515', margin: 'auto' }}>
+            <h1>Client Lobby</h1>
+            <div id='messageDisp' style={{ marginBottom: '30px' }}>
+              {messageArray.map((mes, i) => {
+                if (mes.id === peerClient.id)
+                  return <Message name={'You'} message={mes.data} sender={1} />
+                else
+                  return <Message name={mes.name} message={mes.data} sender={0} />
+              })}
+            </div>
+            <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+          </Box>
+        </ThemeProvider>
       </>
-      );
+    );
   }
 }
