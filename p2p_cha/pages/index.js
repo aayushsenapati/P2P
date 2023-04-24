@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-import Message from './Message';
-import Login from './Login';
+import Message from './components/Message.js';
+import Login from './components/Login.js';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -184,7 +184,7 @@ export default function Home() {
 
   if (!render) {
     return (
-      <Login darkTheme={darkTheme} handleSubmit={handleSubmit} handleNameEnter={handleNameEnter} handleCheckboxClick={handleCheckboxClick} handleCreateRoomClick={handleCreateRoomClick} selectedClients={selectedClients} clients={clients} />
+      <Login darkTheme={darkTheme} handleSubmit={handleSubmit} handleNameEnter={handleNameEnter} handleCheckboxClick={handleCheckboxClick} handleCreateRoomClick={handleCreateRoomClick} selectedClients={selectedClients} clients={clients} clientName={clientName} />
     );
   }
   else {

@@ -1,4 +1,4 @@
-import ThemeProvider  from '@mui/material/styles';
+import {ThemeProvider}  from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -7,11 +7,12 @@ import Button from '@mui/material/Button';
 
 export default function Login(props) {
     return(
+      <>
         <ThemeProvider theme={props.darkTheme}>
         <CssBaseline/>
         <h1>Client Lobby</h1>
         <form onSubmit={props.handleSubmit}>
-          <Typography variant='h5' htmlFor="clientName">Enter your name:  
+          <Typography variant='h5'>Enter your name:  
             <TextField label="Name" variant="outlined" id="clientName" name="clientName" required onKeyPress={props.handleNameEnter}/>
           <Button type='submit'>Register</Button>
           </Typography>
@@ -20,7 +21,7 @@ export default function Login(props) {
         <h2>Active clients:</h2>
         <ul>
           {Array.from(props.clients.values())
-            .filter((client) => client !== clientName)
+            .filter((client) => client !== props.clientName)
             .map((client, i) => (
               client && (<li key={i}>
                 <input
@@ -37,5 +38,6 @@ export default function Login(props) {
           Create Room
         </button>
       </ThemeProvider>
+      </>
     )
 };
