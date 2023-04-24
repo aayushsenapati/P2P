@@ -19,7 +19,6 @@ const socket = io('http://localhost:3001'); // Change URL to match your server
 export default function Home() {
   const [clients, setClients] = useState(new Map());//active clients
   const [clientName, setClientName] = useState('');//your name
-  const [selectedClients, setSelectedClients] = useState([]);//selected clients
   const [render, setRender] = useState(false);
   const [messageArray, setMessageArray] = useState([]);
   const [peerClient, setPeerClient] = useState("");
@@ -45,6 +44,10 @@ export default function Home() {
       mode: 'dark',
     },
   });
+
+  const setClientFn = (clientName) => {
+    setClientName(clientName);
+  }
 
 
   function getUrlParam(name) {
@@ -126,35 +129,6 @@ export default function Home() {
 
 
 
-  // Handle registration form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const temp = formData.get('clientName')
-    setSelectedClients([...selectedClients, temp]);
-    console.log("in handleSubmit", temp);
-    setClientName(temp);
-
-
-    socket.emit('register', temp);
-
-  };
-
-  const handleNameEnter = (e) => {
-    if (e.target.key === 'Enter')
-      handleSubmit();
-  }
-
-  // Handle checkbox click event
-  const handleCheckboxClick = (e) => {
-    const checkName = e.target.value;
-    if (e.target.checked) {
-      setSelectedClients([...selectedClients, checkName]);
-    } else {
-      setSelectedClients(selectedClients.filter((name) => name !== clientName));
-      console.log("in handleCheckboxClick", clientName);
-    }
-  };
 
   const handleMessageSend = (e) => {
     if (e.key === 'Enter') {
@@ -175,21 +149,21 @@ export default function Home() {
   }
 
   // Handle create room button click event
-  const handleCreateRoomClick = () => {
-    // Send request to server to create new room and add selected clients to it
-    if (selectedClients.length < 2) return;
-    socket.emit('createRoom', { clientArray: selectedClients });
-    setSelectedClients([]);
-  };
+
 
   if (!render) {
     return (
-      <Login darkTheme={darkTheme} handleSubmit={handleSubmit} handleNameEnter={handleNameEnter} handleCheckboxClick={handleCheckboxClick} handleCreateRoomClick={handleCreateRoomClick} selectedClients={selectedClients} clients={clients} clientName={clientName} />
+      <Login
+        darkTheme={darkTheme}
+        clients={clients}
+        clientName={clientName}
+        socket={socket}
+        setClientFn={setClientFn}
+      />
     );
   }
   else {
     return (
-      <>
         <ThemeProvider theme={darkTheme} sx={{ width: '100vw' }} >
           <CssBaseline />
 
@@ -206,7 +180,6 @@ export default function Home() {
             <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
           </Box>
         </ThemeProvider>
-      </>
     );
   }
 }
