@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 //peer ids of selected clients
 
@@ -137,6 +138,11 @@ export default function Home() {
 
   };
 
+  const handleNameEnter = (e) =>{
+    if(e.target.key === 'Enter')
+      handleSubmit();
+  }
+
   // Handle checkbox click event
   const handleCheckboxClick = (e) => {
     const checkName = e.target.value;
@@ -181,8 +187,8 @@ export default function Home() {
         <h1>Client Lobby</h1>
         <form onSubmit={handleSubmit}>
           <Typography variant='h5' htmlFor="clientName">Enter your name:  
-            <TextField label="Name" variant="outlined" id="clientName" name="clientName" required />
-          <button type="submit">Register</button>
+            <TextField label="Name" variant="outlined" id="clientName" name="clientName" required onKeyPress={handleNameEnter}/>
+          <Button type='submit'>Register</Button>
           </Typography>
           
         </form>
