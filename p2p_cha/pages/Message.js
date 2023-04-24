@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
 const msgStyle =
-    { width: '30vw', maxWidth: '50vw', borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '0px' }
+    { width: '20%', minWidth: '10%', height:'auto', borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '0px' }
 
 export default function Message(props) {
 
@@ -19,7 +19,7 @@ export default function Message(props) {
         msgStyle.color = 'green';
     }
     return (
-        <Box sx={{ width: '100vw' }}>
+        <Box sx={{ width: '100%' }}>
             <Card variant='outlined' sx={msgStyle}>
                 <CardContent sx={{
                     padding: '0px', "&:last-child": { paddingBottom: '0px' }, padding: '0px', paddingLeft: '20px', paddingBottom: '0px'

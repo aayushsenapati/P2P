@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 //peer ids of selected clients
 
@@ -216,19 +217,24 @@ export default function Home() {
   }
   else {
     return (
-      <ThemeProvider theme={darkTheme}>
+      <>
+      <ThemeProvider theme={darkTheme} sx={{width:'100vw'}} >
         <CssBaseline />
-        <h1>Client Lobby</h1>
-        <div id='messageDisp' style={{ marginBottom: '30px' }}>
-          {messageArray.map((mes, i) => {
-            if (mes.id === peerClient.id)
-              return <Message name={'You'} message={mes.data} sender={1} />
-            else
-              return <Message name={mes.name} message={mes.data} sender={0} />
 
-          })}
-        </div>
-        <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-      </ThemeProvider>);
+        <Box sx={{width:'70%',height:'100vh', backgroundColor:'#151515', margin:'auto'}}>
+          <h1>Client Lobby</h1>
+          <div id='messageDisp' style={{ marginBottom: '30px'}}>
+            {messageArray.map((mes, i) => {
+              if (mes.id === peerClient.id)
+                return <Message name={'You'} message={mes.data} sender={1} />
+              else
+                return <Message name={mes.name} message={mes.data} sender={0} />
+            })}
+          </div>
+          <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+        </Box>
+      </ThemeProvider>
+      </>
+      );
   }
 }
