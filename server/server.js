@@ -6,7 +6,7 @@ const http = require('http').createServer(app);
 const { ExpressPeerServer } = require('peer');
 const io = require('socket.io')(http, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
