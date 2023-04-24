@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
+import Message from './Message';
+
 //peer ids of selected clients
 
 
@@ -43,6 +45,8 @@ export default function Home() {
   // Listen for list of active clients
   useEffect(() => {
     import('peerjs').then(module => {
+      if(!clientName)
+        return;
       const Peer = module.default;
       const peer = new Peer(undefined, {
         host: '/',
@@ -56,7 +60,6 @@ export default function Home() {
         console.log('My peer ID is: ' + id);
         socket.on('renderRoom', (roomName) => {
           console.log(roomName)
-          setRender(true);
           socket.emit('peerID', id, roomName);
         })
       });
@@ -64,12 +67,13 @@ export default function Home() {
         console.log(err.message);
       });
       peer.on('connection', function (connec) {
-        console.log("connected peer id:", connec.peer)
+        console.log("connected peer id:", connec.peer, connec.label)
+        setRender(true);
         connec.on("data", (data) => {
           // Will print 'hi!'
           console.log(data);
           let id = connec.peer
-          setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data }]))
+          setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label }]))
         });
         connec.on("error", (err) => {
           console.log(err.message);
@@ -77,7 +81,9 @@ export default function Home() {
       });
       socket.on('clientPeerID', (clientPeerID) => {
         //console.log('connected client peer id:', clientPeerID);
-        const conn = peer.connect(clientPeerID, { reliable: true });
+        const conn = peer.connect(clientPeerID, { reliable: true, label: clientName});
+        console.log('peer.connect name', clientName);
+        console.log('in peer.connect', conn);
         setPeerConn((peerConn)=>[...peerConn, conn])
         //console.log("peerConn in peer.connect:", peerConn) wont do anything,
         conn.on("open", () => {
@@ -99,7 +105,7 @@ export default function Home() {
       socket.off('clientList');
       socket.off('clientPeerID');
     };
-  }, []);
+  }, [clientName]);
 
 
 
@@ -109,7 +115,10 @@ export default function Home() {
     const formData = new FormData(e.target);
     const temp = formData.get('clientName')
     setSelectedClients([...selectedClients, temp]);
+    console.log("in handleSubmit",temp);
     setClientName(temp);
+    
+
     socket.emit('register', temp);
 
   };
@@ -121,6 +130,7 @@ export default function Home() {
       setSelectedClients([...selectedClients, checkName]);
     } else {
       setSelectedClients(selectedClients.filter((name) => name !== clientName));
+      console.log("in handleCheckboxClick",clientName);
     }
   };
 
@@ -188,13 +198,15 @@ export default function Home() {
         <div id='messageDisp' style={{ marginBottom: '30px' }}>
           {messageArray.map((mes, i) => {
             if (mes.id === peerClient.id)
-              return <h2 key={i} style={{ justifyContent: 'left', color: 'blue' }}>{mes.data}</h2>
-            else
+              return <Message name={'You'} message = {mes.data} sender={1}/>
+              else
+              return <Message name={mes.name} message = {mes.data} sender={0}/>
               return <h2 key={i} style={{ justifyContent: 'right', color: 'green' }}>{mes.data}</h2>
 
           })}
         </div>
         <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+        <Message/>
       </>);
   }
 }
