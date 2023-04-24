@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
 import Message from './Message';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 //peer ids of selected clients
 
@@ -32,6 +36,14 @@ export default function Home() {
       { urls: "turn:relay1.expressturn.com:3478", username: "efZU0G18FKVK6GOKSN", credential: "3NiZNfNHWglGkCcu" },
     ],
   };
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
+
+
   function getUrlParam(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regexS = "[\\?&]" + name + "=([^&#]*)";
@@ -45,7 +57,7 @@ export default function Home() {
   // Listen for list of active clients
   useEffect(() => {
     import('peerjs').then(module => {
-      if(!clientName)
+      if (!clientName)
         return;
       const Peer = module.default;
       const peer = new Peer(undefined, {
@@ -73,7 +85,9 @@ export default function Home() {
           // Will print 'hi!'
           console.log(data);
           let id = connec.peer
-          setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label }]))
+          if(!data.includes(":connected")){
+            setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label }]))
+          }
         });
         connec.on("error", (err) => {
           console.log(err.message);
@@ -81,16 +95,16 @@ export default function Home() {
       });
       socket.on('clientPeerID', (clientPeerID) => {
         //console.log('connected client peer id:', clientPeerID);
-        const conn = peer.connect(clientPeerID, { reliable: true, label: clientName});
+        const conn = peer.connect(clientPeerID, { reliable: true, label: clientName });
         console.log('peer.connect name', clientName);
         console.log('in peer.connect', conn);
-        setPeerConn((peerConn)=>[...peerConn, conn])
+        setPeerConn((peerConn) => [...peerConn, conn])
         //console.log("peerConn in peer.connect:", peerConn) wont do anything,
         conn.on("open", () => {
           //console.log("Connected to: " + conn.peer);
           var command = getUrlParam("command");
-          if ("command:", command)
-            conn.send(command);
+          if (command)
+            conn.send("command:", command);
           conn.send(`${peer.id}:connected`);
         });
         conn.on("error", (err) => {
@@ -115,9 +129,9 @@ export default function Home() {
     const formData = new FormData(e.target);
     const temp = formData.get('clientName')
     setSelectedClients([...selectedClients, temp]);
-    console.log("in handleSubmit",temp);
+    console.log("in handleSubmit", temp);
     setClientName(temp);
-    
+
 
     socket.emit('register', temp);
 
@@ -130,7 +144,7 @@ export default function Home() {
       setSelectedClients([...selectedClients, checkName]);
     } else {
       setSelectedClients(selectedClients.filter((name) => name !== clientName));
-      console.log("in handleCheckboxClick",clientName);
+      console.log("in handleCheckboxClick", clientName);
     }
   };
 
@@ -140,7 +154,7 @@ export default function Home() {
       e.target.value = '';
 
       if (!message) return;
-      console.log("typed message",message);
+      console.log("typed message", message);
       console.log("peerConn:", peerConn)
       peerConn.forEach((conn) => {
         //console.log("in handle message send", conn)
@@ -162,12 +176,15 @@ export default function Home() {
 
   if (!render) {
     return (
-      <div>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline/>
         <h1>Client Lobby</h1>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="clientName">Enter your name:</label>
-          <input type="text" id="clientName" name="clientName" required />
+          <Typography variant='h5' htmlFor="clientName">Enter your name:  
+            <TextField label="Name" variant="outlined" id="clientName" name="clientName" required />
           <button type="submit">Register</button>
+          </Typography>
+          
         </form>
         <h2>Active clients:</h2>
         <ul>
@@ -188,25 +205,24 @@ export default function Home() {
         <button onClick={handleCreateRoomClick} disabled={selectedClients.length === 0}>
           Create Room
         </button>
-      </div>
+      </ThemeProvider>
     );
   }
   else {
     return (
-      <>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
         <h1>Client Lobby</h1>
         <div id='messageDisp' style={{ marginBottom: '30px' }}>
           {messageArray.map((mes, i) => {
             if (mes.id === peerClient.id)
-              return <Message name={'You'} message = {mes.data} sender={1}/>
-              else
-              return <Message name={mes.name} message = {mes.data} sender={0}/>
-              return <h2 key={i} style={{ justifyContent: 'right', color: 'green' }}>{mes.data}</h2>
+              return <Message name={'You'} message={mes.data} sender={1} />
+            else
+              return <Message name={mes.name} message={mes.data} sender={0} />
 
           })}
         </div>
         <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-        <Message/>
-      </>);
+      </ThemeProvider>);
   }
 }
