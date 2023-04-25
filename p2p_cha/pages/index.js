@@ -148,13 +148,14 @@ export default function Home() {
     );
   }
   else {
-    return (<Chat
-      darkTheme={darkTheme}
-      messageArray={messageArray}
-      setMsgFn={setMsgFn}
-      peerConn={peerConn}
-      peerClient={peerClient}
-
-    />)
+    return (<>
+      <Chat
+        darkTheme={darkTheme}
+        messageArray={messageArray}
+        setMsgFn={setMsgFn}
+        peerConn={peerConn}
+        peerClient={peerClient}
+        />
+      </>)
   }
 }

@@ -1,12 +1,19 @@
 import Message from './Message.js';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, createTheme  } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
+import {useState} from 'react'
+import Call from './Call.js'
 
 
 
 export default function Chat(props) {
-
+    const [callOn, setCallOn] = useState(false);
+    
+    
+    const setCallFn = (callOn) => {
+        setCallOn(callOn);
+    }
     const handleMessageSend = (e) => {
         if (e.key === 'Enter') {
             let message = e.target.value
@@ -26,10 +33,11 @@ export default function Chat(props) {
     }
 
     return (
-        <ThemeProvider theme={props.darkTheme} sx={{ width: '100vw' }} >
+        <>
+            <ThemeProvider theme={props.darkTheme}>
             <CssBaseline />
 
-            <Box sx={{ width: '70%', height: '100%', backgroundColor: '#151515', margin: 'auto' }}>
+            <Box sx={{ width: callOn ? ('30%') : ('70%'), height: '100%', backgroundColor: '#151515', margin: callOn ? ('10px') : ('auto') }}>
                 <h1>Client Lobby</h1>
                 <div id='messageDisp' style={{ marginBottom: '30px' }}>
                     {props.messageArray.map((mes, i) => {
@@ -46,6 +54,10 @@ export default function Chat(props) {
                     })}
                 </div>
                 <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
+                <button onClick={()=>{setCallOn(true)}}>Call</button>
             </Box>
-        </ThemeProvider>)
+        </ThemeProvider>
+        {callOn?(<Call setCallFn={setCallFn}/>):(<></>)}
+        </>
+        )
 }
