@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-import Message from './components/Message.js';
 import Login from './components/Login.js';
 import Chat from './components/Chat.js';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 
 //peer ids of selected clients
 
@@ -20,17 +14,12 @@ const colorArr = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#e91e63','#f1c40f']
 
 export default function Home() {
   const [clients, setClients] = useState(new Map());//active clients
-  const [clientName, setClientName] = useState('');//your name
+  const [clientName, setClientName] = useState('');//your name upon registration
   const [render, setRender] = useState(false);
-  const [messageArray, setMessageArray] = useState([]);
-  const [peerClient, setPeerClient] = useState("");
-  const [peerConn, setPeerConn] = useState([]);
+  const [messageArray, setMessageArray] = useState([]);//array of messages from users
+  const [peerClient, setPeerClient] = useState("");//current peer object
+  const [peerConn, setPeerConn] = useState([]);//array of connections
 
-
-
-  /* useEffect(() => {
-    console.log(messageArray);
-  }, [messageArray]); */
 
   const configuration = {
     iceServers: [
@@ -80,7 +69,7 @@ export default function Home() {
         config: configuration,
         debug: 1
       });
-      setPeerClient[peer]
+      setPeerClient(peer)
       peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
         socket.on('renderRoom', (roomName) => {
