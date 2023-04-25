@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
+
 const msgStyle =
     { width: '20%', minWidth: '10%', height:'auto', borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '0px' }
 
@@ -12,11 +13,11 @@ export default function Message(props) {
 
     if (props.sender) {
         msgStyle.marginLeft = 'auto';
-        msgStyle.color = 'blue';
+        msgStyle.color = 'skyblue';
     }
     else {
         msgStyle.marginLeft = '0px';
-        msgStyle.color = 'green';
+        msgStyle.color = props.color;
     }
     return (
         <Box sx={{ width: '100%' }}>

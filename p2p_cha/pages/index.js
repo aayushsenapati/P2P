@@ -14,6 +14,7 @@ import Box from '@mui/material/Box';
 
 
 const socket = io('http://localhost:3001'); // Change URL to match your server
+const colorArr = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#e91e63','#f1c40f']
 
 
 export default function Home() {
@@ -86,13 +87,17 @@ export default function Home() {
       });
       peer.on('connection', function (connec) {
         console.log("connected peer id:", connec.peer, connec.label)
+        //random color
+        const randomInd = Math.floor(Math.random() * colorArr.length)
+        const randomColor = colorArr[randomInd];
+        colorArr.splice(randomInd, 1);
         setRender(true);
         connec.on("data", (data) => {
           // Will print 'hi!'
           console.log(data);
           let id = connec.peer
           if (!data.includes(":connected")) {
-            setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label }]))
+            setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': data, 'name': connec.label, 'color': randomColor }]))
           }
         });
         connec.on("error", (err) => {
@@ -159,6 +164,7 @@ export default function Home() {
         clientName={clientName}
         socket={socket}
         setClientFn={setClientFn}
+
       />
     );
   }
@@ -174,7 +180,7 @@ export default function Home() {
                 if (mes.id === peerClient.id)
                   return <Message name={'You'} message={mes.data} sender={1} />
                 else
-                  return <Message name={mes.name} message={mes.data} sender={0} />
+                  return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} />
               })}
             </div>
             <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
