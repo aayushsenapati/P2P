@@ -2,6 +2,7 @@ import Message from './Message.js';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 
 
@@ -40,6 +41,7 @@ export default function Chat(props) {
                             isFirstMes = 0;
 
                         if (mes.id === props.peerClient.id)
+                            // return <Typography sx={{wordWrap:'break-word', width:'30%'}}>hisuhefsdhfjdsfhjdsfhjdshfdsjkfhjdsfhsdjkfhjdsfksdfjsdfjkdshfjksdhfjdskfhjdsfhjdskfhsdjfhsdjkfhdsjkfhdsjkfhsdjkfhsdjkfhsdkfjhdsfjksdhfsdhfjkhjfkdsfdsjfkdsjfhdskfds</Typography>
                             return <Message name={'You'} message={mes.data} sender={1} isFirstMes={isFirstMes} />
                         else
                             return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />

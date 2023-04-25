@@ -54,15 +54,16 @@ export default function Login(props) {
       <>
         <ThemeProvider theme={props.darkTheme}>
         <CssBaseline/>
-        <h1>Client Lobby</h1>
+        <Typography variant='h2' style={{margin:'30px', marginLeft:'10px'}}>Client Lobby</Typography>
         <form onSubmit={handleSubmit}>
-          <Typography variant='h5'>Enter your name:  
-            <TextField placeholder="Enter Name" variant="outlined" id="clientName" name="clientName" required onKeyPress={handleNameEnter}/>
-          <Button type='submit'>Register</Button>
-          </Typography>
+          <div style={{display:'flex', alignItems:'center', marginLeft:'20px'}}>
+            <Typography variant='h5' style={{marginRight:'10px',}}>Enter your name: </Typography>
+            <TextField placeholder="Enter Name" variant="outlined" size='small' id="clientName" name="clientName" required onKeyPress={handleNameEnter}/>
+            <Button type='submit' variant='outline'>Register</Button>
+          </div>
           
         </form>
-        <h2>Active clients:</h2>
+        <Typography>Active clients:</Typography>
         <ul>
           {Array.from(props.clients.values())
             .filter((client) => client !== clientName)
