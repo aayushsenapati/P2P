@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 
 import Message from './components/Message.js';
 import Login from './components/Login.js';
+import Chat from './components/Chat.js';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -49,6 +50,11 @@ export default function Home() {
   const setClientFn = (clientName) => {
     setClientName(clientName);
   }
+
+  const setMsgFn = (message) => {
+    setMessageArray(((messageArray) => [...messageArray, message]));
+  }
+
 
 
   function getUrlParam(name) {
@@ -135,23 +141,7 @@ export default function Home() {
 
 
 
-  const handleMessageSend = (e) => {
-    if (e.key === 'Enter') {
-      let message = e.target.value
-      e.target.value = '';
 
-      if (!message) return;
-      console.log("typed message", message);
-      console.log("peerConn:", peerConn)
-      peerConn.forEach((conn) => {
-        //console.log("in handle message send", conn)
-        conn.send(message);
-      })
-      let id = peerClient.id
-      setMessageArray(((messageArray) => [...messageArray, { 'id': id, 'data': message }]))
-
-    }
-  }
 
   // Handle create room button click event
 
@@ -169,24 +159,13 @@ export default function Home() {
     );
   }
   else {
-    return (
-        <ThemeProvider theme={darkTheme} sx={{ width: '100vw' }} >
-          <CssBaseline />
+    return (<Chat
+      darkTheme={darkTheme}
+      messageArray={messageArray}
+      setMsgFn={setMsgFn}
+      peerConn={peerConn}
+      peerClient={peerClient}
 
-          <Box sx={{ width: '70%', height: '100%', backgroundColor: '#151515', margin: 'auto' }}>
-            <h1>Client Lobby</h1>
-            <div id='messageDisp' style={{ marginBottom: '30px' }}>
-              {messageArray.map((mes, i) => {
-                // if()
-                if (mes.id === peerClient.id)
-                  return <Message name={'You'} message={mes.data} sender={1} />
-                else
-                  return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} />
-              })}
-            </div>
-            <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-          </Box>
-        </ThemeProvider>
-    );
+    />)
   }
 }

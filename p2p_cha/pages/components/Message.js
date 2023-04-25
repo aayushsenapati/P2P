@@ -6,18 +6,30 @@ import CardContent from '@mui/material/CardContent';
 
 
 const msgStyle =
-    { display : 'flex', width: '20%', minWidth: '10%', height:'auto', borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '0px' }
+    { display : 'flex', width: '20%', minWidth: '10%', height:'auto',borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '0px' }
 
+const nameStyle = { color: msgStyle.color, fontSize: '12px' }
+    
 export default function Message(props) {
 
+    if(props.isFirstMes)
+        {nameStyle.display = 'block';
+        msgStyle.marginTop = '10px';
+}  
 
+    else
+       { nameStyle.display = 'none';
+        msgStyle.marginTop = '3px'
+       }
     if (props.sender) {
         msgStyle.marginLeft = 'auto';
         msgStyle.color = 'skyblue';
+        msgStyle.borderColor = 'skyblue';
     }
     else {
         msgStyle.marginLeft = '0px';
         msgStyle.color = props.color;
+        msgStyle.borderColor = props.color;
     }
     return (
         <Box sx={{ width: '100%' }}>
@@ -25,7 +37,7 @@ export default function Message(props) {
                 <CardContent sx={{
                     padding: '0px', "&:last-child": { paddingBottom: '0px' }, padding: '0px', paddingLeft : '10px', paddingBottom: '0px'
                 }}>
-                    <Typography variant='h9' sx={{ color: msgStyle.color, fontSize: '12px' }}> {props.name} </Typography>
+                    <Typography variant='h9' sx={nameStyle}> {props.name} </Typography>
                     <Typography variant='h6' sx={{ wordWrap : 'break-word', color: 'White', fontSize: '18px' }}> {props.message}</Typography>
                 </CardContent>
             </Card>
