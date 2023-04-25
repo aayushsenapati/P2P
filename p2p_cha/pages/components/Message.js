@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 
 
 const msgStyle =
-    { width: '20%', height:'auto',borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '10px' }
+    { width: '20%', height:'auto',borderRadius: '15px', marginLeft: 'auto', marginTop: '10px', padding: '5px' }
 
 const nameStyle = { color: msgStyle.color, fontSize: '12px' }
     
@@ -24,11 +24,15 @@ export default function Message(props) {
         msgStyle.marginLeft = 'auto';
         msgStyle.color = 'skyblue';
         msgStyle.borderColor = 'skyblue';
+        msgStyle.borderBottomRightRadius = '2px';
+        msgStyle.borderBottomLeftRadius = '15xpx';
     }
     else {
         msgStyle.marginLeft = '0px';
         msgStyle.color = props.color;
         msgStyle.borderColor = props.color;
+        msgStyle.borderBottomRightRadius = '15px';
+        msgStyle.borderBottomLeftRadius = '2px';
     }
     return (
         <Box sx={{ width: '100%', display:'flex' }}>
