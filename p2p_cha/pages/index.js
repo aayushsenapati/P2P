@@ -173,10 +173,11 @@ export default function Home() {
         <ThemeProvider theme={darkTheme} sx={{ width: '100vw' }} >
           <CssBaseline />
 
-          <Box sx={{ width: '70%', height: '100vh', backgroundColor: '#151515', margin: 'auto' }}>
+          <Box sx={{ width: '70%', height: '100%', backgroundColor: '#151515', margin: 'auto' }}>
             <h1>Client Lobby</h1>
             <div id='messageDisp' style={{ marginBottom: '30px' }}>
               {messageArray.map((mes, i) => {
+                // if()
                 if (mes.id === peerClient.id)
                   return <Message name={'You'} message={mes.data} sender={1} />
                 else
