@@ -23,10 +23,12 @@ export default function Message(props) {
             msgStyle.borderTopRightRadius = '12px';
         }
     }
-
+    
     else {
         nameStyle.display = 'none';
         msgStyle.marginTop = '3px'
+        msgStyle.borderTopLeftRadius = '12px';
+        msgStyle.borderTopRightRadius = '12px';
     }
     if (props.sender) {
         msgStyle.marginLeft = 'auto';

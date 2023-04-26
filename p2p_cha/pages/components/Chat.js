@@ -7,6 +7,8 @@ import Call from './Call.js'
 import TextField from '@mui/material/TextField';
 import { useEffect,useState} from 'react';
 
+const empty = {};
+
 export default function Chat(props) {
     const [callOn, setCallOn] = useState(false);
     
@@ -38,9 +40,10 @@ export default function Chat(props) {
             <ThemeProvider theme={props.darkTheme}>
             <CssBaseline />
 
-            <Box sx={{ width: callOn ? ('30%') : ('70%'),position:'relative',height:'100%', backgroundColor: '#151515', margin: callOn ? ('10px') : ('auto') }}>
-                <h1>Client Lobby</h1>
-                <div id='messageDisp' style={{height:'80%',overflowY:'scroll', marginBottom: '100px' ,padding:'0px 20px 0px 20px'}}>
+            <Box sx={{height:'100%', width:callOn?('30%'):('70%'),margin:callOn?('0px'):('auto')}}>
+                {/* <h1>Client Lobby</h1> */}
+
+                <div id='messageDisp' style={{height:'90%', overflowY:'scroll',padding:'0px 15px 0px 15px'}}>
                     {props.messageArray.map((mes, i) => {
                         let isFirstMes = 0;
                         if (i == 0 || props.messageArray[i].id !== props.messageArray[i - 1].id)
@@ -55,13 +58,15 @@ export default function Chat(props) {
                             return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />
                     })}
                 </div>
-                <div style={{ position:'sticky', bottom:'0px',top:'0px', height:'10%',backgroundColor:'#101010', width: '100%', display:'flex', alignItems:'center', margin:'0px', padding:'10px 0px 10px 0px'}}>
-                    <TextField fullHeight sx={{'& .MuiInputBase-root':{height:'100%'},height:'100%',width:'90%',marginRight:'10px'}} placeholder='Enter Message' onKeyPress={handleMessageSend}></TextField>
-                    <Button onClick={()=>{setCallFn(true)}} sx={{height:'100%'}}>Call</Button>
+                
+
+                <div id='msgBar'style={{display:'flex', justifyContent:'center'}}>
+                    <TextField  sx={{}} placeholder='Enter Message' onKeyPress={handleMessageSend}></TextField>
+                    <Button onClick={()=>{setCallFn(true)}} sx={{}}>Call</Button>
                 </div>
             </Box>
+            {callOn?(<Call setCallFn={setCallFn}/>):(<></>)}
         </ThemeProvider>
-        {callOn?(<Call setCallFn={setCallFn}/>):(<></>)}
         </>
         )
 }
