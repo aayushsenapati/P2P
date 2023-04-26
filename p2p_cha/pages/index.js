@@ -103,7 +103,7 @@ export default function Home() {
         //console.log('connected client peer id:', clientPeerID);
         const conn = peer.connect(clientPeerID, { reliable: true, label: clientName });
         console.log('peer.connect name', clientName);
-        console.log('in peer.connect', conn);
+        console.log('in peer.connect', conn.peer);
         setPeerConn((peerConn) => [...peerConn, conn])
         //console.log("peerConn in peer.connect:", peerConn) wont do anything,
         conn.on("open", () => {
