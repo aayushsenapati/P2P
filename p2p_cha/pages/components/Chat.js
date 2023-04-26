@@ -38,9 +38,9 @@ export default function Chat(props) {
             <ThemeProvider theme={props.darkTheme}>
             <CssBaseline />
 
-            <Box sx={{ width: callOn ? ('30%') : ('70%'), height: '100%', backgroundColor: '#151515', margin: callOn ? ('10px') : ('auto') }}>
+            <Box sx={{ width: callOn ? ('30%') : ('70%'),position:'relative',height:'100%', backgroundColor: '#151515', margin: callOn ? ('10px') : ('auto') }}>
                 <h1>Client Lobby</h1>
-                <div id='messageDisp' style={{ marginBottom: '100px' ,padding:'0px 20px 0px 20px'}}>
+                <div id='messageDisp' style={{height:'80%',overflowY:'scroll', marginBottom: '100px' ,padding:'0px 20px 0px 20px'}}>
                     {props.messageArray.map((mes, i) => {
                         let isFirstMes = 0;
                         if (i == 0 || props.messageArray[i].id !== props.messageArray[i - 1].id)
@@ -55,11 +55,10 @@ export default function Chat(props) {
                             return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />
                     })}
                 </div>
-                <div style={{ position:'fixed', bottom:'0px', height:'10%',borderTop:'1px solid white',backgroundColor:'#101010', width: '70%', display:'flex', alignItems:'center', margin:'0px', padding:'10px 0px 10px 0px'}}>
+                <div style={{ position:'sticky', bottom:'0px',top:'0px', height:'10%',backgroundColor:'#101010', width: '100%', display:'flex', alignItems:'center', margin:'0px', padding:'10px 0px 10px 0px'}}>
                     <TextField fullHeight sx={{'& .MuiInputBase-root':{height:'100%'},height:'100%',width:'90%',marginRight:'10px'}} placeholder='Enter Message' onKeyPress={handleMessageSend}></TextField>
-                    <Button sx={{height:'100%',width:'10%'}}size='large' variant='outlined'>Call</Button>
-                    <button onClick={()=>{setCallFn(true)}}>Call</button>
-            </div>
+                    <Button onClick={()=>{setCallFn(true)}} sx={{height:'100%'}}>Call</Button>
+                </div>
             </Box>
         </ThemeProvider>
         {callOn?(<Call setCallFn={setCallFn}/>):(<></>)}
