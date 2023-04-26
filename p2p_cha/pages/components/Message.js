@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 
 
 const msgStyle =
-    { width: '20%', height: 'auto', borderRadius: '20px', marginLeft: 'auto', marginTop: '10px', padding: '10px' }
+    {  maxWidth:'45%', height: 'auto', borderRadius: '12px', marginLeft: 'auto', marginTop: '10px', padding: '5px' }
 
 const nameStyle = { color: msgStyle.color, fontSize: '12px' }
 
@@ -14,12 +14,20 @@ export default function Message(props) {
     if (props.isFirstMes) {
         nameStyle.display = 'block';
         msgStyle.marginTop = '10px';
+        if (props.sender) {
+            msgStyle.borderTopLeftRadius = '12px';
+            msgStyle.borderTopRightRadius = '2px';
+        }
+        else {
+            msgStyle.borderTopLeftRadius = '2px';
+            msgStyle.borderTopRightRadius = '12px';
+        }
     }
 
     else {
         nameStyle.display = 'none';
         msgStyle.marginTop = '3px'
-    }
+       }
     if (props.sender) {
         msgStyle.marginLeft = 'auto';
         msgStyle.color = 'skyblue';
@@ -32,9 +40,10 @@ export default function Message(props) {
     }
     return (
         <Box sx={{ width: '100%', display: 'flex' }}>
+        <Box sx={{ width: '100%', display: 'flex' }}>
             <Card variant='outlined' sx={msgStyle}>
                 <CardContent sx={{
-                    padding: '0px', "&:last-child": { paddingBottom: '0px' }, padding: '0px', paddingLeft: '10px', paddingBottom: '0px'
+                    padding: '0px', "&:last-child": { paddingBottom: '0px' }, padding: '0px 10px 0px 10px', 
                 }}>
                     <Typography variant='h9' sx={nameStyle}>
                         {props.name}
