@@ -5,9 +5,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Call from './Call.js'
 import TextField from '@mui/material/TextField';
-import { useEffect,useState} from 'react';
+import { useEffect,useState, useRef} from 'react';
 
-const empty = {};
+const EndMsg = () => {
+    const elementRef = useRef(null);
+    useEffect(() => elementRef.current.scrollIntoView({behaviour:'smooth'}));
+    return <div ref={elementRef} />;
+    };
 
 export default function Chat(props) {
     const [callOn, setCallOn] = useState(false);
@@ -42,8 +46,10 @@ export default function Chat(props) {
 
             <Box sx={{height:'100%', width:callOn?('30%'):('70%'),margin:callOn?('0px'):('auto')}}>
                 {/* <h1>Client Lobby</h1> */}
+                <div id='chatInfo' style={{height:'10%'}}>
 
-                <div id='messageDisp' style={{height:'90%', overflowY:'scroll',padding:'0px 15px 0px 15px'}}>
+                </div>
+                <div id='messageDisp' style={{height:'80%', overflowY:'scroll',padding:'0px 15px 0px 15px'}}>
                     {props.messageArray.map((mes, i) => {
                         let isFirstMes = 0;
                         if (i == 0 || props.messageArray[i].id !== props.messageArray[i - 1].id)
@@ -57,6 +63,7 @@ export default function Chat(props) {
                         else
                             return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />
                     })}
+                    <EndMsg/>
                 </div>
                 
 
