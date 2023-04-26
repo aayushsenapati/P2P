@@ -1,5 +1,5 @@
 
 
 export default function Call(props) {
-    return(<></>)
+    return(<><button onClick={()=>{props.setCallFn(false)}}>Cok</button></>)
 }

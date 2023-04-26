@@ -2,8 +2,7 @@ import Message from './Message.js';
 import { ThemeProvider, createTheme  } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import Call from './Call.js'
 
 
@@ -15,6 +14,7 @@ export default function Chat(props) {
     const setCallFn = (callOn) => {
         setCallOn(callOn);
     }
+
     const handleMessageSend = (e) => {
         if (e.key === 'Enter') {
             let message = e.target.value
@@ -56,7 +56,7 @@ export default function Chat(props) {
                     })}
                 </div>
                 <input style={{ border: 'black' }} placeholder='Enter Message' onKeyPress={handleMessageSend}></input>
-                <button onClick={()=>{setCallOn(true)}}>Call</button>
+                <button onClick={()=>{setCallFn(true)}}>Call</button>
             </Box>
         </ThemeProvider>
         {callOn?(<Call setCallFn={setCallFn}/>):(<></>)}
