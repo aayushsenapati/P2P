@@ -34,22 +34,22 @@ export default function Call(props) {
             props.peerConn.forEach((conn) => {
                 const call = props.peerClient.call(conn.peer, stream);
                 console.log(call)
-                call.on('stream', function (stream) {
+                call.on('stream', function (str) {
                     // `stream` is the MediaStream of the remote peer.
                     // Here you'd add it to an HTML video/canvas element.
-                    connVideo.current.srcObject = stream;
+                    connVideo.current.srcObject = str;
                     connVideo.current.play();
                     console.log("in call on stream");
                 });
             })
 
         })
+        props.peerClient.on('call', function (call) {
+            console.log("answering call now");
+            // Answer the call, providing our mediaStream
+            call.answer(userStream);
+        });
     }
-    props.peerClient.on('call', function (call) {
-        console.log("answering call now");
-        // Answer the call, providing our mediaStream
-        call.answer(userStream);
-    });
 
 
     useEffect(() => {

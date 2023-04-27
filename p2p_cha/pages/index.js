@@ -62,13 +62,7 @@ export default function Home() {
       if (!clientName)
         return;
       const Peer = module.default;
-      const peer = new Peer(undefined, {
-        host: '/',
-        port: '3002',
-        path: '/peerjs',
-        config: configuration,
-        debug: 1
-      });
+      const peer = new Peer();
       setPeerClient(peer)
       peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
