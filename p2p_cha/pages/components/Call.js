@@ -3,6 +3,8 @@ import { useRef, useEffect } from 'react'
 
 
 export default function Call(props) {
+    const userVideo = useRef();
+    const connVideo = useRef();
 
     var userStream;
 
@@ -10,16 +12,18 @@ export default function Call(props) {
         //clearInterval(theDrawLoop);
         //ExtensionData.vidStatus = 'off';
         userVideo.current.pause();
-        userVideo.current.src= '';
+        userVideo.current.src = '';
         // userStream.getTracks().map  (track => { track.stop();});
         // userStream.getTracks().map  (track => { track.stop();});
-        if(userStream){
-        userStream.getAudioTracks()[0].stop();
-        userStream.getVideoTracks()[0].stop();
-        console.log("Vid off");}
+        if (userStream) {
+            userStream.getAudioTracks()[0].stop();
+            userStream.getVideoTracks()[0].stop();
+            console.log("Vid off");
+        }
     }
 
     const startCall = () => {
+
         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
         getUserMedia({ video: true, audio: true }, (stream) => {
@@ -27,17 +31,36 @@ export default function Call(props) {
             userStream = stream;
             userVideo.current.srcObject = stream;
             userVideo.current.play();
+            props.peerConn.forEach((conn) => {
+                const call = props.peerClient.call(conn.peer, stream);
+                console.log(call)
+                call.on('stream', function (stream) {
+                    // `stream` is the MediaStream of the remote peer.
+                    // Here you'd add it to an HTML video/canvas element.
+                    connVideo.current.srcObject = stream;
+                    connVideo.current.play();
+                    console.log("in call on stream");
+                });
+            })
+
         })
     }
+    props.peerClient.on('call', function (call) {
+        console.log("answering call now");
+        // Answer the call, providing our mediaStream
+        call.answer(userStream);
+    });
+
 
     useEffect(() => {
         startCall();
     }, [])
 
-    const userVideo = useRef();
+
 
     return (<>
         <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
-        <video ref={userVideo} style={{width:'100%',height:'56.25%',transform:'rotateY(180deg)'}} muted></video>
+        <video ref={userVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
+        <video ref={connVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
     </>)
 }
