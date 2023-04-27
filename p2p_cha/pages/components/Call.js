@@ -13,9 +13,10 @@ export default function Call(props) {
         userVideo.current.src= '';
         // userStream.getTracks().map  (track => { track.stop();});
         // userStream.getTracks().map  (track => { track.stop();});
+        if(userStream){
         userStream.getAudioTracks()[0].stop();
         userStream.getVideoTracks()[0].stop();
-        console.log("Vid off");
+        console.log("Vid off");}
     }
 
     const startCall = () => {
@@ -37,6 +38,6 @@ export default function Call(props) {
 
     return (<>
         <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
-        <video ref={userVideo} style={{width:'100%',height:'56.25%'}}></video>
+        <video ref={userVideo} style={{width:'100%',height:'56.25%',transform:'rotateY(180deg)'}} muted></video>
     </>)
 }
