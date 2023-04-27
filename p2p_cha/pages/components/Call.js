@@ -32,13 +32,16 @@ export default function Call(props) {
             userVideo.current.srcObject = stream;
             userVideo.current.play();
             props.peerConn.forEach(async (conn) => {
-                const call = await props.peerClient.call(conn.peer, stream);
+                const call = await props.peerClient.call(conn.peer, stream, [conn.metadata]);
                 console.log(call)
                 call.on('stream', function (str) {
                     // `stream` is the MediaStream of the remote peer.
                     // Here you'd add it to an HTML video/canvas element.
                     connVideo.current.srcObject = str;
-                    connVideo.current.play();
+                    connVideo.current.onloadedmetadata =  function(e) {
+                        connVideo.current.play();
+                      };
+                    
                     console.log("in call on stream");
                 });
             })
