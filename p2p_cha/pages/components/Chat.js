@@ -63,9 +63,9 @@ export default function Chat(props) {
 
                                 if (mes.id === props.peerClient.id)
                                     // return <Typography sx={{wordWrap:'break-word', width:'30%'}}>hisuhefsdhfjdsfhjdsfhjdshfdsjkfhjdsfhsdjkfhjdsfksdfjsdfjkdshfjksdhfjdskfhjdsfhjdskfhsdjfhsdjkfhdsjkfhdsjkfhsdjkfhsdjkfhsdkfjhdsfjksdhfsdhfjkhjfkdsfdsjfkdsjfhdskfds</Typography>
-                                    return <Message name={'You'} message={mes.data} sender={1} isFirstMes={isFirstMes} />
+                                    return <Message key={i} name={'You'} message={mes.data} sender={1} isFirstMes={isFirstMes} />
                                 else
-                                    return <Message name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />
+                                    return <Message key={i} name={mes.name} color={mes.color} message={mes.data} sender={0} isFirstMes={isFirstMes} />
                             })}
                             <EndMsg />
                         </div>

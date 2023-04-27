@@ -8,7 +8,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 //peer ids of selected clients
 
 
-const socket = io('http://localhost:3001'); // Change URL to match your server
+const socket = io('https://p2p-server.onrender.com'); // Change URL to match your server
 const colorArr = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#e91e63','#f1c40f']
 
 
