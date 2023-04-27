@@ -37,6 +37,6 @@ export default function Call(props) {
 
     return (<>
         <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
-        <video ref={userVideo}></video>
+        <video ref={userVideo} style={{width:'100%',height:'56.25%'}}></video>
     </>)
 }
