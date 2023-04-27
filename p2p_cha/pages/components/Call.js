@@ -37,8 +37,9 @@ export default function Call(props) {
                 call.on('stream', function (str) {
                     // `stream` is the MediaStream of the remote peer.
                     // Here you'd add it to an HTML video/canvas element.
-                    connVideo.current.srcObject = str;
-                    connVideo.current.play();
+                    const t=connVideo.current
+                    t.srcObject = str;
+                        connVideo.current.play();
                     console.log("in call on stream");
                 });
             })
