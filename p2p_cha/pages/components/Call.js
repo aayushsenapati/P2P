@@ -22,7 +22,7 @@ export default function Call(props) {
         }
     }
 
-    const startCall = async () => {
+    const startCall = async () => { 
 
         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
