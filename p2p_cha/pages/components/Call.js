@@ -22,17 +22,17 @@ export default function Call(props) {
         }
     }
 
-    const startCall = () => {
+    const startCall =async () => {
 
         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-        getUserMedia({ video: true, audio: true }, (stream) => {
+        navigator.getUserMedia({ video: true, audio: true }, async (stream) => {
             console.log("in get user media", stream);
             userStream = stream;
             userVideo.current.srcObject = stream;
             userVideo.current.play();
-            props.peerConn.forEach((conn) => {
-                const call = props.peerClient.call(conn.peer, stream);
+            props.peerConn.forEach(async (conn) => {
+                const call = await props.peerClient.call(conn.peer, stream);
                 console.log(call)
                 call.on('stream', function (str) {
                     // `stream` is the MediaStream of the remote peer.
@@ -43,7 +43,8 @@ export default function Call(props) {
                 });
             })
 
-        })
+        },
+        err => {console.log(err)})
         props.peerClient.on('call', function (call) {
             console.log("answering call now");
             // Answer the call, providing our mediaStream
@@ -60,7 +61,9 @@ export default function Call(props) {
 
     return (<>
         <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
-        <video ref={userVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
-        <video ref={connVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
+        <div style={{display:'flex', flexDirection:'column'}}>
+            <video ref={userVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
+            <video ref={connVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }}        ></video>
+        </div>
     </>)
 }
