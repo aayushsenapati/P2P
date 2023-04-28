@@ -1,12 +1,13 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
-
+import VideoPlayer from './VideoPlayer.js'
 
 export default function Call(props) {
     const userVideo = useRef();
     const connVideo = useRef();
+    const [userStream, setUserStream] = useState(null);
 
-    var userStream;
+    const [peerStreamArray, setPeerStreamArray] = useState([]);
 
     const vidOff = () => {
         //clearInterval(theDrawLoop);
@@ -22,25 +23,30 @@ export default function Call(props) {
         }
     }
 
-    const startCall = async () => { 
+    function peerStream(stream) {
+        let tempArray = [...peerStreamArray];
+        tempArray.push(stream);
+        setPeerStreamArray(tempArray);
+    }
+
+    const startCall = async () => {
 
         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-        navigator.getUserMedia({ video: true, audio: true }, async (stream) => {
+        getUserMedia({ video: true, audio: true }, async (stream) => {
             console.log("in get user media", stream);
-            userStream = stream;
+            setUserStream(stream);
             userVideo.current.srcObject = stream;
             userVideo.current.play();
             props.peerConn.forEach(async (conn) => {
                 const call = await props.peerClient.call(conn.peer, stream, [conn.metadata]);
                 console.log(call)
-                call.on('stream', function (str) {
+                call.on('stream', async function (str) {
                     // `stream` is the MediaStream of the remote peer.
                     // Here you'd add it to an HTML video/canvas element.
-                    const t = connVideo.current
-                    t.srcObject = str;
-                    connVideo.current.play();
-                    console.log("in call on stream");
+                    console.log("in call on stream", str);
+                    setPeerStreamArray([...peerStreamArray, str]);
+
                 });
             })
 
@@ -52,23 +58,28 @@ export default function Call(props) {
                 // Answer the call, providing our mediaStream
                 call.answer(stream)
             })
-        
-    })
 
-}
+        })
+
+    }
 
 
     useEffect(() => {
-                startCall();
-            }, [])
+        startCall();
+    }, [])
 
+    useEffect(() => {
+        console.log("peer stream array", peerStreamArray)
+    }, [peerStreamArray])
 
 
     return (<>
-            <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <video ref={userVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
-                <video ref={connVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }}        ></video>
-            </div>
-        </>)
-    }
+        <button onClick={() => { props.setCallFn(false); vidOff() }}>Cok</button>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <video ref={userVideo} style={{ width: '100%', height: '56.25%', transform: 'rotateY(180deg)' }} muted></video>
+            {peerStreamArray&&peerStreamArray.map((str, i) => {
+                return <VideoPlayer key={i} stream={str}/>
+            })}
+        </div>
+    </>)
+}
