@@ -24,9 +24,7 @@ export default function Call(props) {
     }
 
     function peerStream(stream) {
-        let tempArray = [...peerStreamArray];
-        tempArray.push(stream);
-        setPeerStreamArray(tempArray);
+        setPeerStreamArray((peerStreamArray)=>[...peerStreamArray, stream]);
     }
 
     const startCall = async () => {
@@ -46,7 +44,8 @@ export default function Call(props) {
                     // `stream` is the MediaStream of the remote peer.
                     // Here you'd add it to an HTML video/canvas element.
                     console.log("in call on stream", str);
-                    setPeerStreamArray([...peerStreamArray, str]);
+                    peerStream(str);
+                    
 
                 });
             })
