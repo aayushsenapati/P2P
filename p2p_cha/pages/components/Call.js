@@ -24,6 +24,7 @@ export default function Call(props) {
     }
 
     function peerStream(stream) {
+        if(!peerStreamArray.includes(stream))
         setPeerStreamArray((peerStreamArray)=>[...peerStreamArray, stream]);
     }
 
@@ -31,7 +32,7 @@ export default function Call(props) {
 
         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-        getUserMedia({ video: true, audio: true }, async (stream) => {
+        getUserMedia({ video: true, audio: true }, (stream) => {
             console.log("in get user media", stream);
             setUserStream(stream);
             userVideo.current.srcObject = stream;
