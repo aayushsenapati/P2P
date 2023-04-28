@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 
 const colorArr = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#e91e63','#f1c40f']
 
@@ -54,34 +55,36 @@ export default function Login(props) {
       <>
         <ThemeProvider theme={props.darkTheme}>
         <CssBaseline/>
-        <Typography variant='h2' style={{margin:'30px', marginLeft:'10px'}}>Client Lobby</Typography>
-        <form onSubmit={handleSubmit}>
-          <div style={{display:'flex', alignItems:'center', marginLeft:'20px'}}>
-            <Typography variant='h5' style={{marginRight:'10px',}}>Enter your name: </Typography>
+        <Typography variant='h1' style={{margin:'100px' ,fontFamily:'Cascadia Mono'}}>p2p_cha</Typography>
+        <form onSubmit={handleSubmit} style={{margin:'30px'}}>
+          <div style={{display:'flex', alignItems:'center', marginLeft:'50px'}}>
+            <Typography variant='h4' style={{marginRight:'10px',}}>Enter your name: </Typography>
             <TextField placeholder="Enter Name" variant="outlined" size='small' id="clientName" name="clientName" required onKeyPress={handleNameEnter}/>
-            <Button type='submit' variant='outline'>Register</Button>
+            <Button type='submit' variant='outlined' sx={{marginLeft:'20px'}}>Register</Button>
           </div>
           
-        </form>
-        <Typography>Active clients:</Typography>
-        <ul>
+        </form >
+        <div style={{marginLeft:'80px', marginBottom:'30px'}}>
+          <Typography>Active clients:</Typography>
           {Array.from(props.clients.values())
             .filter((client) => client !== clientName)
             .map((client, i) => (
-              client && (<li key={i}>
-                <input
+              client && (
+                <div key={i}>
+                <Checkbox 
+                  
                   type="checkbox"
                   value={client}
                   onChange={handleCheckboxClick}
                   defaultChecked={selectedClients.includes(client)}
                 />
-                {client}
-              </li>)
+                <label>{client}</label></div>
+              )
             ))}
-        </ul>
-        <button onClick={handleCreateRoomClick} disabled={selectedClients.length === 0}>
+        </div>
+        <Button onClick={handleCreateRoomClick} disabled={selectedClients.length === 0} variant='outlined' sx={{margin:' 0px 80px'}}>
           Create Room
-        </button>
+        </Button>
       </ThemeProvider>
       </>
     )
