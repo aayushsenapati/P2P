@@ -39,6 +39,7 @@ export default function Call(props) {
             userVideo.current.srcObject = stream;
             userVideo.current.play();
             props.peerConn.forEach(async (conn) => {
+                console.log("this is halal",conn.peer)
                 const call = await props.peerClient.call(conn.peer, stream, [conn.metadata]);
                 console.log(call)
                 call.on('stream', async function (str) {

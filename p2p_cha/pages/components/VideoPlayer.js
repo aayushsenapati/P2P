@@ -10,6 +10,6 @@ export default function VideoPlayer(props){
         if(videoRef.current) videoRef.current.srcObject = props.stream;
         console.log("VIDEO AAAAAAAAAAAA");
     }, [props.stream]);
-    return <video ref = {videoRef} autoPlay muted style = {{width : '100px', height : '100px'}}></video>
+    return <video ref = {videoRef} autoPlay muted style = {{width : '100%', height : '56.25%'}}></video>
 
 }
